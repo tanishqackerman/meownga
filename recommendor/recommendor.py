@@ -2,17 +2,20 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
 
 
-def update_dataset(csv_file, json_data):
-    df = pd.read_csv(csv_file)
+def update_dataset(json_data):
+    df = pd.read_csv("manga_dataset.csv")
     json_df = pd.DataFrame(json_data, index=[0])
     df = df.append(json_df, ignore_index=True)
-    df.to_csv(csv_file, index=False)
+    df.to_csv("manga_dataset.csv", index=False)
 
 
-def recommend(csv_file, manga_id):
-    df = pd.read_csv(csv_file)
+def recommend(manga_id):
+    df = pd.read_csv("manga_dataset.csv")
     df = df[["mal_id", "title", "genres", "author", "synopsis"]]
 
     def convert_list_to_string(s):
@@ -30,5 +33,37 @@ def recommend(csv_file, manga_id):
     manga_index = newdf[newdf["id"] == manga_id].index[0]
     distances = similarity[manga_index]
     manga_list = sorted(list(enumerate(distances)), reverse=True, key=lambda x: x[1])[1: 6]
-    for i in manga_list:
-        print(newdf.iloc[i[0]].title)
+    return manga_list
+
+
+@app.route('/recommendor', methods=['POST'])
+def perform_action():
+    try:
+        data = request.json
+        on_action = data.get('on_action')
+
+        if on_action == 'recommend':
+            mangaid = data.get('mangaid')
+            if mangaid is None:
+                return jsonify({'error': 'mangaid is required for recommendation'}), 400
+
+            manga_list = recommend(mangaid)
+            return jsonify({'recommendation': manga_list})
+
+        elif on_action == 'update':
+            update_json = data.get('manga')
+            if update_json is None:
+                return jsonify({'error': 'manga is required for update action'}), 400
+
+            update_dataset(update_json)
+            return jsonify({'update_result': "success"})
+
+        else:
+            return jsonify({'error': 'Invalid on_action value'}), 400
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
