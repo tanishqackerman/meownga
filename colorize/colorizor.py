@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import torch
 from flask import Flask, request, jsonify
@@ -212,7 +214,7 @@ def process_image(input_image):
 
 
 @app.route('/colorizeImage', methods=['POST'])
-def process_image_api():
+def colorize():
     try:
         data = request.get_json()
         base64_image_string = data.get('mangaImage', '')
@@ -225,6 +227,8 @@ def process_image_api():
         with open("colorizedImage.png", "rb") as image_file:
             image_data = image_file.read()
         processed_base64_string = base64.b64encode(image_data).decode("utf-8")
+
+        os.remove("colorizedImage.png")
 
         return jsonify({'colorizedImage': processed_base64_string})
 

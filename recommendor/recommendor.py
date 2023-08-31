@@ -37,7 +37,7 @@ def recommend(manga_id):
 
 
 @app.route('/recommendor', methods=['POST'])
-def perform_action():
+def recommendor():
     try:
         data = request.json
         on_action = data.get('on_action')

@@ -140,7 +140,7 @@ def generate_anime_face():
 
 
 @app.route('/generateAnimeFace', methods=['GET'])
-def get_image():
+def generate():
     try:
         generate_anime_face()
         with open("animeFace.png", "rb") as image_file:
