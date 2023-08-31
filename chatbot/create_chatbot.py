@@ -39,7 +39,7 @@ except ImportError:
 def create_chatbot(id):
     data = pd.read_csv(f'{id}.csv')
 
-    CHARACTER_NAME = data["name"].unique_values[0]
+    CHARACTER_NAME = data['name'].mode().values[0]
 
     contexted = []
 
@@ -189,7 +189,7 @@ def create_chatbot(id):
             self.fp16 = False
             self.fp16_opt_level = 'O1'
 
-    args = Args()
+    args = Args(id)
 
     def train(args, train_dataset, model: PreTrainedModel, tokenizer: PreTrainedTokenizer) -> Tuple[int, float]:
         """ Train the model """
@@ -522,7 +522,7 @@ def create_chatbot(id):
 
 
 @app.route('/createChatbot', methods=['POST'])
-def process_received_id():
+def createChatbot():
     data = request.get_json()
     if 'id' in data:
         id = data['id']
