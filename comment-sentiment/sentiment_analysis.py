@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 
 def sentimentAnalysis(comment):
-    classifier = pipeline("sentiment-analysis")
+    classifier = pipeline("comment-sentiment-analysis")
     sentiment = classifier(comment)
     return sentiment[0]['label']
 
@@ -21,7 +21,7 @@ def comment_sentiment():
 
         processed_comment = sentimentAnalysis(comment)
         return jsonify(
-            {'comment': comment, 'sentiment': processed_comment})
+            {'comment': comment, 'comment-sentiment': processed_comment})
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
