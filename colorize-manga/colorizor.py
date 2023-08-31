@@ -1,5 +1,4 @@
 import os
-
 import numpy as np
 import torch
 from flask import Flask, request, jsonify
@@ -15,7 +14,7 @@ app = Flask(__name__)
 
 DEVICE = "cpu"
 LEARNING_RATE = 2e-4
-CHECKPOINT_GEN = "gen.pth.tar"
+CHECKPOINT_GEN = "colorize.pth.tar"
 
 both_transform = A.Compose(
     [A.Resize(width=256, height=256), ], additional_targets={"image0": "image"}, is_check_shapes=False
