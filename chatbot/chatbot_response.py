@@ -46,7 +46,7 @@ def generate_reply(id, message):
 
 @app.route('/chatbotReply', methods=['POST'])
 def chatbot_response():
-    data = request.get_json()  # Get JSON data from request body
+    data = request.get_json()
     if 'id' in data and 'message' in data:
         id = data['id']
         message = data['message']
